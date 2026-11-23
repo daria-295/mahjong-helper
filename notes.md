@@ -45,28 +45,28 @@ An independent tool for analysing Riichi Mahjong hands, probabilities, and tile 
 
 ## Phase 1
  - [x] Mahjong tile system
-   - [x] Represent all 34 tile types
-    - [x] Red Fives
+   - [x] Represent all 34 tile type
+   - [x] Red Fives
     - [x] Tile combinations
     - [x] Prevent more than 4 copies of a tile
     
 
-  - [ ] Hand representation
+  - [x] Hand representation
     - [x] Create a Hand class
-    - [ ] Store concealed tiles
-    - [ ] Store tile counts efficiently
-    - [ ] Track red fives separately from normal fives
-    - [ ] Store existing melds
-    - [ ] Track whether the hand is open or close
+    - [x] Store concealed tiles
+    - [x] Store tile counts efficiently
+    - [x] Track red fives separately from normal fives
+    - [x] Store existing melds
+    - [x] Track whether the hand is open or close
   
   
   - [ ] Hand validation
-    - [ ] Validate tile inputs
-    - [ ] Check that no tile exceeds the maximum of four copies
+    - [x] Validate tile inputs
+    - [x] Check that no tile exceeds the maximum of four copies
     - [ ] Check whether the hand has the correct number of tiles
     - [ ] Account for existing melds when calculating hand size
     - [ ] Validate existing melds (correct tile combinations)
-    - [ ] Handle invalid hand configurations
+    - [x] Handle invalid hand configurations
 
   - [ ] Hand structure analysis
     - [ ] Identify pairs

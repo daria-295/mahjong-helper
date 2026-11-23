@@ -61,7 +61,7 @@ def is_suit(tile: Tile) -> bool:
 def is_honour(tile: Tile) -> bool:
     return tile.value >= 27
 
-def is_five(tile: Tile) -> bool:
+def is_red(tile: Tile) -> bool:
     return tile in RED_FIVES
 
 def get_suit(tile: Tile) -> str | None:
