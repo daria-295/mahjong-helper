@@ -45,9 +45,9 @@ An independent tool for analysing Riichi Mahjong hands, probabilities, and tile 
 
 ## Phase 1
  - [x] Mahjong tile system
-   - [x] Represent all 34 tile type
-   - [x] Red Fives
-    - [x] Tile combinations
+   - [x] Represent all 34 tile types
+   - [x] Represent Red Fives separately
+    - [x] Define tile combinations and suit ordering
     - [x] Prevent more than 4 copies of a tile
     
 
@@ -57,66 +57,141 @@ An independent tool for analysing Riichi Mahjong hands, probabilities, and tile 
     - [x] Store tile counts efficiently
     - [x] Track red fives separately from normal fives
     - [x] Store existing melds
-    - [x] Track whether the hand is open or close
+    - [x] Track whether the hand is open or closed
+    - [x] Add and remoe tiles
+    - [x] Count total tiles and individual tile tpes
+    - [x] Clear a hand
   
   
   - [ ] Hand validation
+    - [x] Check whether the hand has the correct number of tiles
+    - [x] Account for existing melds when calculating hand size
     - [x] Validate tile inputs
-    - [x] Check that no tile exceeds the maximum of four copies
-    - [ ] Check whether the hand has the correct number of tiles
-    - [ ] Account for existing melds when calculating hand size
-    - [ ] Validate existing melds (correct tile combinations)
-    - [x] Handle invalid hand configurations
-
-  - [ ] Hand structure analysis
-    - [ ] Identify pairs
-    - [ ] Identify triplets
-    - [ ] Identify sequences
-    - [ ] Identify possible melds within concealed tiles
-    - [ ] Identify incomplete sequences (e.g. 2m 3m)
-    - [ ] Determine whether a hand is structurally complete
-    - [ ] Recognise standard winning hand structure (4 melds + 1 pair)
-    - [ ] Recognise special hand structures (e.g. Chiitoitsu and Kokushi)
+    - [ ] Check that no tile exceeds the maximum of four copies
+    - [x] Validate existing melds (correct tile combinations)
+    - [x] Handle invalid inputs and basic invalid configurations
 
   - [ ] Existing melds
-    - [ ] Represent a meld as a data structure
-    - [ ] Store the tiles belonging to each meld
-    - [ ] Store whether a meld is open or closed
-    - [ ] Support sequences (Chi)
-    - [ ] Support triplets (Pon)
-    - [ ] Support quads (Kan)
+    - [x] Represent a meld as a data structure
+    - [x] Store the tiles belonging to each meld
+    - [x] Store whether a meld is open or closed
+    - [x] Support sequences (Chi)
+    - [x] Support triplets (Pon)
+    - [x] Support quads (Kan)
+    - [x] Validate legal Chi combinations
+    - [x] Validate legal Pon combinations
+    - [x] Validate legal Kan combinations
     - [ ] Distinguish between different types of Kan where relevant
+
+
+  - [ ] Hand structure analysis
+    - [x] Identify pairs
+    - [x] Identify triplets
+    - [x] Identify sequences
+    - [x] Identify adjacent incomplete sequences (e.g. 2m 3m)
+    - [x] Identify gapped incomplete sequences (e.g. 2m 4m)
+    - [x] Determine whether a hand is structurally complete
+    - [x] Recognise standard winning hand structure (4 melds + 1 pair)
+    - [x] Recognise Seven Pairs
+    - [x] Recognise Thirteen Orphans
+    - [x] Return possible standard-hand decompositions
+    - [ ] dentify and return all possible melds within concealed tiles independently
+
 
 ## Phase 2
  - [ ] 1. Shanten calculator
- - [ ] 2. Tile availability and Ukiere
- - [ ] 3. Yaku detection
-   - [ ] Common Yaku
-   - [ ] Detecting combinations of Yaku
-   - [ ] Account for open and closed hands
-   
+    - [x] Find first remaining tile
+    - [x] Recursively explore possible groupings
+    - [x] Identify complete melds
+    - [x] Identify pairs
+    - [x] Identify incomplete melds (taatsu)
+    - [x] Calculate standard-hand shanten
+    - [x] Account for existing melds in the formula
+    - [x] Test complete hands (-1)
+    - [x] Test Tenpai hands (0)
+    - [x] Test one-shanten hands (1)
+    - [x] Test multiple pairs and alternative groupings
+    - [ ] Test hands containing existing melds
+    - [ ] Test edge cases and unusual groupings
+    - [ ] Implement Chiitoitsu shanten
+    - [ ] Implement Kokushi Musou shanten
+    - [ ] Return the minimum shanten across all applicable hand types
 
- - [ ] 4. Hand Scoring
-   - [ ] Calculate Han
-   - [ ] Calculate Fu
-   - [ ] Calcualte final hand value
-   - [ ] Account for dealer and non-dealer scoring
 
+  - [ ] 2. Tile availability and Ukeire
+    - [ ] Identify tiles that improve the hand
+    - [ ] Calculate remaining copies of each tile
+    - [ ] Calculate total Ukeire
+    - [ ] Identify winning tiles (waits)
+    - [ ] Account for visible tiles and existing melds
+
+
+  - [x] 3. Yaku detection
+  - [x] Regular Yaku
+    - [x] Riichi
+    - [x] Double Riichi
+    - [x] Ippatsu
+    - [x] Menzen Tsumo
+    - [x] Tanyao
+    - [x] Yakuhai
+    - [x] Pinfu
+    - [x] Iipeikou
+    - [x] Ryanpeikou
+    - [x] Toitoi
+    - [x] Honitsu
+    - [x] Chinitsu
+    - [x] Chanta
+    - [x] Junchan
+    - [x] Sanshoku Doujun
+    - [x] Sanshoku Doukou
+    - [x] Ittsu
+    - [x] Honroutou
+    - [x] Shousangen
+    - [x] Sanankou
+    - [x] Sankantsu
+    - [x] Chiitoitsu
+    - [x] Rinshan Kaihou
+    - [x] Chankan
+    - [x] Haitei
+    - [x] Houtei
+  - [ ] Yakuman
+    - [x] Daisangen
+    - [x] Shousuushi
+    - [x] Daisuushi
+    - [x] Suuankou
+    - [x] Suukantsu
+    - [x] Tsuuiisou
+    - [x] Chinroutou
+    - [x] Ryuuiisou
+    - [x] Chuuren Poutou
+    - [x] Kokushi Musou
+    - [x] Tenhou
+    - [x] Chiihou
+  
+
+- [ ] 4. Hand scoring
+    - [ ] Calculate Han
+    - [ ] Calculate Fu
+    - [ ] Calculate final hand value
+    - [ ] Account for dealer and non-dealer scoring
+    - [ ] Account for limit hands (Mangan, Haneman, Baiman, Sanbaiman, Yakuman)
+    - [ ] Account for Dora, Ura Dora, Aka Dora and Kan Dora
 ## Phase 3
  - [ ] 1. Hand efficiency analyser
    - [ ] Display current Shanten
-   - [ ] Possible hand improvements
+   - [ ] Display possible hand improvments
    - [ ] Evaluate hand flexibility
+   - [ ] Recommend tiles to discard
 
  - [ ] 2. Yaku and hand strategy analyser
-   - [ ] Potential Yaku routes
+   - [ ] Identify potential Yaku routes
    - [ ] Calculate Shanten for different Yaku routes
    - [ ] Compare Ukiere between routes
    - [ ] Estimate potential hand value
    - [ ] Compare efficiency against value
    - [ ] Recommend promising strategies
 
- - [ ] Probability calcualtor
+ - [ ] 3. Probability calcualtor
    - [ ] Calculate probability of drawing a particular tile
    - [ ] Calculate probability of drawing useful tiles within N draws
     - [ ] Estimate probability of reaching Tenpai

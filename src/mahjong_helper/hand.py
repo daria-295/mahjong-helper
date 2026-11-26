@@ -80,3 +80,21 @@ class Hand():
         if not isinstance(meld,Meld):
             raise TypeError("meld must be an instance of Meld")
         self.melds.append(meld)
+
+    def get_expected_tile_count(self,is_drawn=False):
+        meld_count =len(self.melds)
+        if is_drawn:
+            return 14 - (3 * meld_count)
+
+        return 13 - (3 * meld_count)
+
+    def validate_hand_size(self, is_drawn=False):
+        expected=self.get_expected_tile_count(is_drawn)
+
+        if self.get_total_tiles() != expected:
+            raise ValueError(
+                f"Hand must contain {expected} concealed tiles, "
+                f"but contains {self.get_total_tiles()}"
+            )
+
+        
