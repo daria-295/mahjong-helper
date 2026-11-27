@@ -25,25 +25,34 @@ def calculate_shanten(hand:Hand)->int:
     if not isinstance(hand,Hand):
         raise TypeError("hand must be a Hand instance")
 
-    tile_counts=hand.get_hand()
-    existing_meld_count=len(hand.melds)
+    meld_count = len(hand.melds)
 
-    groupings=calculate_groups(tile_counts)
-    best_shanten=8
+    valid_sizes = (13 - (3 * meld_count),14 - (3 * meld_count))
 
-    for melds,taatsu,pairs in groupings:
-        total_melds= melds + existing_meld_count
+    if hand.get_total_tiles() not in valid_sizes:
+        raise ValueError("Incorrect number of tiles for shanten calculation")
+
+    tile_counts = hand.get_hand()
+    groupings= calculate_groups(tile_counts)
+    best_shanten= 8
+
+    for melds, taatsu, pairs in groupings:
+        total_melds = melds + meld_count
 
         if total_melds > 4:
             continue
 
-        effective_taatsu=taatsu + max(0, pairs - 1)
+        effective_taatsu = taatsu + max(0, pairs - 1)
         available_slots = 4 - total_melds
         useful_taatsu = min(effective_taatsu, available_slots)
 
         has_pair = 1 if pairs > 0 else 0
-        shanten = 8 - (2 * total_melds) - useful_taatsu - has_pair
+
+        shanten = (8- (2 * total_melds)- useful_taatsu- has_pair)
         best_shanten = min(best_shanten, shanten)
+
+    if not hand.melds:
+        best_shanten = min(best_shanten,calculate_chiitoitsu_shanten(hand),calculate_kokushi_shanten(hand))
 
     return best_shanten
 
@@ -246,6 +255,33 @@ def is_kokushi(hand: Hand) -> bool:
 
     return sum(tile_counts[tile.value] for tile in KOKUSHI_TILES) == 14
 
+def calculate_chiitoitsu_shanten(hand: Hand) -> int:
+    if not isinstance(hand, Hand):
+        raise TypeError("hand must be a Hand instance")
+
+    if hand.melds:
+        return 99
+
+    tile_counts = hand.get_hand()
+    pairs = sum(count >= 2 for count in tile_counts)
+    unique_tiles = sum(count > 0 for count in tile_counts)
+
+    return 6 - pairs + max(0, 7 - unique_tiles)
+
+def calculate_kokushi_shanten(hand: Hand) -> int:
+    if not isinstance(hand, Hand):
+        raise TypeError("hand must be a Hand instance")
+
+    if hand.melds:
+        return 99
+
+    tile_counts = hand.get_hand()
+    unique_orphans = sum(tile_counts[tile.value] > 0 for tile in KOKUSHI_TILES)
+
+    has_pair = any(tile_counts[tile.value] >= 2 for tile in KOKUSHI_TILES)
+
+    return 13 - unique_orphans - int(has_pair)
+
 def is_complete_hand(hand: Hand) -> bool:
     if not isinstance(hand, Hand):
         raise TypeError("hand must be a Hand instance")
@@ -255,4 +291,117 @@ def is_complete_hand(hand: Hand) -> bool:
         or is_chiitoitsu(hand)
         or is_kokushi(hand)
     )
+
+def get_ukeire(hand: Hand, visible_tiles=None) -> dict[Tile, int]:
+    if not isinstance(hand, Hand):
+        raise TypeError("hand must be a Hand instance")
+
+    if visible_tiles is None:
+        visible_tiles = []
+
+    visible_tiles = list(visible_tiles)
+
+    if not all(isinstance(tile, Tile) for tile in visible_tiles):
+        raise TypeError("visible_tiles must contain Tile instances")
+
+    meld_count = len(hand.melds)
+    expected_size = 13 - (3 * meld_count)
+
+    if hand.get_total_tiles() != expected_size:
+        raise ValueError("Ukeire requires a hand before drawing")
+
+    current_shanten = calculate_shanten(hand)
+    known_counts = get_known_tile_counts(hand, visible_tiles)
+
+    ukeire = {}
+
+    for tile in Tile:
+        remaining = 4 - known_counts[tile.value]
+
+        if remaining <= 0:
+            continue
+
+        candidate = Hand()
+        candidate.concealed_tiles = hand.get_hand()
+        candidate.red_fives = hand.red_fives.copy()
+        candidate.melds = hand.melds.copy()
+
+        candidate.add_tile(tile)
+
+        new_shanten = calculate_shanten(candidate)
+
+        if new_shanten < current_shanten:
+            ukeire[tile] = remaining
+
+    return ukeire
+
+def get_known_tile_counts(hand: Hand, visible_tiles=None) -> list[int]:
+    if visible_tiles is None:
+        visible_tiles = []
+
+    counts = hand.get_hand()
+
+    for meld in hand.melds:
+        for tile in meld.tiles:
+            counts[tile.value] += 1
+
+    for tile in visible_tiles:
+        if not isinstance(tile, Tile):
+            raise TypeError("visible_tiles must contain Tile instances")
+
+        counts[tile.value] += 1
+
+    if any(count > 4 for count in counts):
+        raise ValueError("Known tile count cannot exceed four")
+
+    return counts
+
+def calculate_total_ukeire(hand: Hand, visible_tiles=None) -> int:
+    return sum(get_ukeire(hand, visible_tiles).values())
+
+def find_winning_tiles(hand: Hand) -> list[Tile]:
+    if not isinstance(hand, Hand):
+        raise TypeError("hand must be a Hand instance")
+
+    meld_count = len(hand.melds)
+    expected_size = 13 - (3 * meld_count)
+
+    if hand.get_total_tiles() != expected_size:
+        raise ValueError("Wait detection requires a 13-tile hand")
+
+    known_counts = get_known_tile_counts(hand)
+    winning_tiles = []
+
+    for tile in Tile:
+        if known_counts[tile.value] >= 4:
+            continue
+
+        candidate = Hand()
+        candidate.concealed_tiles = hand.get_hand()
+        candidate.red_fives = hand.red_fives.copy()
+        candidate.melds = hand.melds.copy()
+
+        candidate.add_tile(tile)
+
+        if is_complete_hand(candidate):
+            winning_tiles.append(tile)
+
+    return winning_tiles
+
+def get_waits(hand: Hand, visible_tiles=None) -> dict[Tile, int]:
+    if visible_tiles is None:
+        visible_tiles = []
+
+    visible_tiles = list(visible_tiles)
+
+    if not all(isinstance(tile, Tile) for tile in visible_tiles):
+        raise TypeError("visible_tiles must contain Tile instances")
+
+    known_counts = get_known_tile_counts(hand, visible_tiles)
+
+    return {
+        tile: 4 - known_counts[tile.value]
+        for tile in find_winning_tiles(hand)
+        if known_counts[tile.value] < 4
+    }
 

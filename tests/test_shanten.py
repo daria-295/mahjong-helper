@@ -153,7 +153,7 @@ def test_calculate_shanten_four_pairs():
     for tile in tiles:
         hand.add_tile(tile)
 
-    assert calculate_shanten(hand) == 4
+    assert calculate_shanten(hand) == 2
 
 def test_is_complete_standard_hand():
     hand = Hand()
@@ -396,4 +396,235 @@ def test_find_hand_decompositions():
     assert len(decomposition["sequences"]) == 4
     assert len(decomposition["triplets"]) == 0
     assert decomposition["pair"] is not None
-    
+
+def test_chiitoitsu_shanten_complete():
+    hand = Hand()
+
+    tiles = [
+        Tile.M1, Tile.M1,
+        Tile.M3, Tile.M3,
+        Tile.P2, Tile.P2,
+        Tile.P5, Tile.P5,
+        Tile.S4, Tile.S4,
+        Tile.S7, Tile.S7,
+        Tile.EAST, Tile.EAST
+    ]
+
+    for tile in tiles:
+        hand.add_tile(tile)
+
+    assert calculate_chiitoitsu_shanten(hand) == -1
+
+def test_chiitoitsu_shanten_tenpai():
+    hand = Hand()
+
+    tiles = [
+        Tile.M1, Tile.M1,
+        Tile.M3, Tile.M3,
+        Tile.P2, Tile.P2,
+        Tile.P5, Tile.P5,
+        Tile.S4, Tile.S4,
+        Tile.S7, Tile.S7,
+        Tile.EAST
+    ]
+
+    for tile in tiles:
+        hand.add_tile(tile)
+
+    assert calculate_chiitoitsu_shanten(hand) == 0
+
+def test_kokushi_shanten_complete():
+    hand = Hand()
+
+    for tile in KOKUSHI_TILES + [Tile.M1]:
+        hand.add_tile(tile)
+
+    assert calculate_kokushi_shanten(hand) == -1
+
+def test_kokushi_shanten_thirteen_sided_wait():
+    hand = Hand()
+
+    for tile in KOKUSHI_TILES:
+        hand.add_tile(tile)
+
+    assert calculate_kokushi_shanten(hand) == 0
+
+def test_kokushi_shanten_missing_orphan():
+    hand = Hand()
+
+    tiles = KOKUSHI_TILES[:-1] + [Tile.M1]
+    for tile in tiles:
+        hand.add_tile(tile)
+
+    assert calculate_kokushi_shanten(hand) == 0
+
+def test_special_shanten_rejects_melds():
+    hand = Hand()
+    hand.add_meld(Meld(
+        [Tile.M1, Tile.M2, Tile.M3],
+        MeldType.CHI
+    ))
+
+    assert calculate_chiitoitsu_shanten(hand) == 99
+    assert calculate_kokushi_shanten(hand) == 99
+
+def test_ukeire_returns_improving_tiles():
+    hand = Hand()
+
+    tiles = [
+        Tile.M1, Tile.M2, Tile.M3,
+        Tile.P1, Tile.P2, Tile.P3,
+        Tile.S1, Tile.S2, Tile.S3,
+        Tile.S7, Tile.S8,
+        Tile.EAST, Tile.EAST
+    ]
+
+    for tile in tiles:
+        hand.add_tile(tile)
+
+    ukeire = get_ukeire(hand)
+
+    assert Tile.S9 in ukeire
+    assert ukeire[Tile.S9] == 4
+
+def test_ukeire_accounts_for_visible_tiles():
+    hand = Hand()
+
+    tiles = [
+        Tile.M1, Tile.M2, Tile.M3,
+        Tile.P1, Tile.P2, Tile.P3,
+        Tile.S1, Tile.S2, Tile.S3,
+        Tile.S7, Tile.S8,
+        Tile.EAST, Tile.EAST
+    ]
+
+    for tile in tiles:
+        hand.add_tile(tile)
+
+    ukeire = get_ukeire(
+        hand,
+        visible_tiles=[Tile.S9, Tile.S9]
+    )
+
+    assert ukeire[Tile.S9] == 2
+
+def test_total_ukeire():
+    hand = Hand()
+
+    tiles = [
+        Tile.M1, Tile.M2, Tile.M3,
+        Tile.P1, Tile.P2, Tile.P3,
+        Tile.S1, Tile.S2, Tile.S3,
+        Tile.S7, Tile.S8,
+        Tile.EAST, Tile.EAST
+    ]
+
+    for tile in tiles:
+        hand.add_tile(tile)
+
+    assert calculate_total_ukeire(hand) == sum(
+        get_ukeire(hand).values()
+    )
+
+def test_find_winning_tiles_standard_hand():
+    hand = Hand()
+
+    tiles = [
+        Tile.M1, Tile.M2, Tile.M3,
+        Tile.P1, Tile.P2, Tile.P3,
+        Tile.S1, Tile.S2, Tile.S3,
+        Tile.S7, Tile.S8,
+        Tile.EAST, Tile.EAST
+    ]
+
+    for tile in tiles:
+        hand.add_tile(tile)
+
+    assert set(find_winning_tiles(hand)) == {
+        Tile.S6,
+        Tile.S9
+    }
+
+def test_find_winning_tiles_chiitoitsu():
+    hand = Hand()
+
+    tiles = [
+        Tile.M1, Tile.M1,
+        Tile.M3, Tile.M3,
+        Tile.P2, Tile.P2,
+        Tile.P5, Tile.P5,
+        Tile.S4, Tile.S4,
+        Tile.S7, Tile.S7,
+        Tile.EAST
+    ]
+
+    for tile in tiles:
+        hand.add_tile(tile)
+
+    assert find_winning_tiles(hand) == [Tile.EAST]
+
+def test_find_winning_tiles_kokushi():
+    hand = Hand()
+
+    for tile in KOKUSHI_TILES:
+        hand.add_tile(tile)
+
+    assert set(find_winning_tiles(hand)) == set(KOKUSHI_TILES)
+
+def test_find_winning_tiles_with_declared_meld():
+    hand = Hand()
+
+    hand.add_meld(Meld(
+        [Tile.M1, Tile.M2, Tile.M3],
+        MeldType.CHI
+    ))
+
+    tiles = [
+        Tile.P1, Tile.P2, Tile.P3,
+        Tile.S1, Tile.S2, Tile.S3,
+        Tile.S7, Tile.S8,
+        Tile.EAST, Tile.EAST
+    ]
+
+    for tile in tiles:
+        hand.add_tile(tile)
+
+    assert set(find_winning_tiles(hand)) == {
+        Tile.S6,
+        Tile.S9
+    }
+
+def test_get_waits_accounts_for_visible_tiles():
+    hand = Hand()
+
+    tiles = [
+        Tile.M1, Tile.M2, Tile.M3,
+        Tile.P1, Tile.P2, Tile.P3,
+        Tile.S1, Tile.S2, Tile.S3,
+        Tile.S7, Tile.S8,
+        Tile.EAST, Tile.EAST
+    ]
+
+    for tile in tiles:
+        hand.add_tile(tile)
+
+    waits = get_waits(
+        hand,
+        visible_tiles=[Tile.S9, Tile.S9, Tile.S9]
+    )
+
+    assert waits[Tile.S6] == 4
+    assert waits[Tile.S9] == 1
+
+def test_find_winning_tiles_rejects_wrong_hand_size():
+    hand = Hand()
+    hand.add_tile(Tile.M1)
+
+    with pytest.raises(ValueError):
+        find_winning_tiles(hand)
+
+def test_get_waits_rejects_invalid_visible_tile():
+    hand = Hand()
+
+    with pytest.raises(TypeError):
+        get_waits(hand, visible_tiles=["M1"])

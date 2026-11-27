@@ -43,177 +43,109 @@ An independent tool for analysing Riichi Mahjong hands, probabilities, and tile 
 
 # Checkpoints
 
-## Phase 1
- - [x] Mahjong tile system
-   - [x] Represent all 34 tile types
-   - [x] Represent Red Fives separately
-    - [x] Define tile combinations and suit ordering
-    - [x] Prevent more than 4 copies of a tile
-    
+## 1. Core Mahjong system
+- [x] Mahjong tile system (34 tiles, Red Fives)
+- [x] Hand representation and tile management
+- [x] Meld representation (Chi, Pon, Kan)
+- [x] Meld combination validation
+- [x] Hand structure analysis and decomposition
+- [ ] Complete hand validation
+- [ ] Distinguish different Kan types
+- [ ] Identify all possible concealed melds
 
-  - [x] Hand representation
-    - [x] Create a Hand class
-    - [x] Store concealed tiles
-    - [x] Store tile counts efficiently
-    - [x] Track red fives separately from normal fives
-    - [x] Store existing melds
-    - [x] Track whether the hand is open or closed
-    - [x] Add and remoe tiles
-    - [x] Count total tiles and individual tile tpes
-    - [x] Clear a hand
-  
-  
-  - [ ] Hand validation
-    - [x] Check whether the hand has the correct number of tiles
-    - [x] Account for existing melds when calculating hand size
-    - [x] Validate tile inputs
-    - [ ] Check that no tile exceeds the maximum of four copies
-    - [x] Validate existing melds (correct tile combinations)
-    - [x] Handle invalid inputs and basic invalid configurations
+## 2. Mahjong analysis engine
+### Shanten calculator
+- [x] Standard Shanten calculation
+- [x] Recursive hand grouping
+- [x] Complete hand, Tenpai and one-Shanten tests
+- [ ] Test existing melds and edge cases
+- [x] Chiitoitsu Shanten
+- [x] Kokushi Musou Shanten
+- [x] Calculate minimum Shanten across all hand types
 
-  - [ ] Existing melds
-    - [x] Represent a meld as a data structure
-    - [x] Store the tiles belonging to each meld
-    - [x] Store whether a meld is open or closed
-    - [x] Support sequences (Chi)
-    - [x] Support triplets (Pon)
-    - [x] Support quads (Kan)
-    - [x] Validate legal Chi combinations
-    - [x] Validate legal Pon combinations
-    - [x] Validate legal Kan combinations
-    - [ ] Distinguish between different types of Kan where relevant
+### Tile availability and Ukeire
+- [x] Identify improving tiles
+- [x] Calculate remaining tile copies
+- [x] Calculate total Ukeire
+- [x] Identify winning waits
+- [x] Account for visible tiles
 
+### Yaku detection
+- [x] All listed regular Yaku
+- [x] All 12 base Yakuman
+- [x] Open/closed hand considerations
+- [x] Ron/Tsumo and situational conditions
+- [ ] Full edge-case verification and double Yakuman variants
 
-  - [ ] Hand structure analysis
-    - [x] Identify pairs
-    - [x] Identify triplets
-    - [x] Identify sequences
-    - [x] Identify adjacent incomplete sequences (e.g. 2m 3m)
-    - [x] Identify gapped incomplete sequences (e.g. 2m 4m)
-    - [x] Determine whether a hand is structurally complete
-    - [x] Recognise standard winning hand structure (4 melds + 1 pair)
-    - [x] Recognise Seven Pairs
-    - [x] Recognise Thirteen Orphans
-    - [x] Return possible standard-hand decompositions
-    - [ ] dentify and return all possible melds within concealed tiles independently
+### Hand scoring
+- [ ] Calculate Han and Fu
+- [ ] Calculate Dora, Ura Dora, Aka Dora and Kan Dora
+- [ ] Calculate final hand value
+- [ ] Dealer/non-dealer scoring
+- [ ] Mangan, Haneman, Baiman, Sanbaiman and Yakuman
 
+## 3. Hand analysis and probability
+### Hand efficiency analyser
+- [ ] Calculate current Shanten
+- [ ] Identify useful tiles and improvements
+- [ ] Evaluate hand flexibility
+- [ ] Compare possible discards
+- [ ] Recommend best discards
 
-## Phase 2
- - [ ] 1. Shanten calculator
-    - [x] Find first remaining tile
-    - [x] Recursively explore possible groupings
-    - [x] Identify complete melds
-    - [x] Identify pairs
-    - [x] Identify incomplete melds (taatsu)
-    - [x] Calculate standard-hand shanten
-    - [x] Account for existing melds in the formula
-    - [x] Test complete hands (-1)
-    - [x] Test Tenpai hands (0)
-    - [x] Test one-shanten hands (1)
-    - [x] Test multiple pairs and alternative groupings
-    - [ ] Test hands containing existing melds
-    - [ ] Test edge cases and unusual groupings
-    - [ ] Implement Chiitoitsu shanten
-    - [ ] Implement Kokushi Musou shanten
-    - [ ] Return the minimum shanten across all applicable hand types
+### Yaku and hand strategy analyser
+- [ ] Identify potential Yaku routes
+- [ ] Calculate Shanten for different strategies
+- [ ] Compare Ukeire between strategies
+- [ ] Estimate potential hand value
+- [ ] Balance efficiency against value
+- [ ] Recommend promising strategies
 
+### Probability calculator
+- [ ] Calculate tile drawing probabilities
+- [ ] Estimate useful draws within N turns
+- [ ] Estimate probability of reaching Tenpai
+- [ ] Estimate probability of completing a hand or Yaku
+- [ ] Simulate possible outcomes
 
-  - [ ] 2. Tile availability and Ukeire
-    - [ ] Identify tiles that improve the hand
-    - [ ] Calculate remaining copies of each tile
-    - [ ] Calculate total Ukeire
-    - [ ] Identify winning tiles (waits)
-    - [ ] Account for visible tiles and existing melds
+## 4. AI strategy and training
+- [ ] Implement efficiency-focused strategy
+- [ ] Implement aggressive/high-value strategy
+- [ ] Implement defensive strategy
+- [ ] Implement balanced strategy
+- [ ] Build Mahjong game simulator
+- [ ] Compare strategies across simulations
+- [ ] Optimise strategy weights
+- [ ] Train AI using PyTorch
+- [ ] Evaluate AI against baseline strategies
 
+## 5. Computer vision and game recognition
+- [ ] Capture game using mss
+- [ ] Process screenshots using OpenCV
+- [ ] Detect and crop individual tiles
+- [ ] Create tile image dataset
+- [ ] Train PyTorch tile recognition model
+- [ ] Recognise all 34 tiles and Red Fives
+- [ ] Detect opponent discards and melds
+- [ ] Track visible tiles during a game
 
-  - [x] 3. Yaku detection
-  - [x] Regular Yaku
-    - [x] Riichi
-    - [x] Double Riichi
-    - [x] Ippatsu
-    - [x] Menzen Tsumo
-    - [x] Tanyao
-    - [x] Yakuhai
-    - [x] Pinfu
-    - [x] Iipeikou
-    - [x] Ryanpeikou
-    - [x] Toitoi
-    - [x] Honitsu
-    - [x] Chinitsu
-    - [x] Chanta
-    - [x] Junchan
-    - [x] Sanshoku Doujun
-    - [x] Sanshoku Doukou
-    - [x] Ittsu
-    - [x] Honroutou
-    - [x] Shousangen
-    - [x] Sanankou
-    - [x] Sankantsu
-    - [x] Chiitoitsu
-    - [x] Rinshan Kaihou
-    - [x] Chankan
-    - [x] Haitei
-    - [x] Houtei
-  - [ ] Yakuman
-    - [x] Daisangen
-    - [x] Shousuushi
-    - [x] Daisuushi
-    - [x] Suuankou
-    - [x] Suukantsu
-    - [x] Tsuuiisou
-    - [x] Chinroutou
-    - [x] Ryuuiisou
-    - [x] Chuuren Poutou
-    - [x] Kokushi Musou
-    - [x] Tenhou
-    - [x] Chiihou
-  
+## 6. PySide6 GUI
+- [ ] Create desktop application
+- [ ] Create tile selector
+- [ ] Add hand editing and tile removal
+- [ ] Add seat and round selection
+- [ ] Display analysis results
+- [ ] Display recommended discards and probabilities
+- [ ] Connect GUI to analysis engine
+- [ ] Make hand entry quick and intuitive (keyboard support)
+- [ ] Integrate live game recognition
 
-- [ ] 4. Hand scoring
-    - [ ] Calculate Han
-    - [ ] Calculate Fu
-    - [ ] Calculate final hand value
-    - [ ] Account for dealer and non-dealer scoring
-    - [ ] Account for limit hands (Mangan, Haneman, Baiman, Sanbaiman, Yakuman)
-    - [ ] Account for Dora, Ura Dora, Aka Dora and Kan Dora
-## Phase 3
- - [ ] 1. Hand efficiency analyser
-   - [ ] Display current Shanten
-   - [ ] Display possible hand improvments
-   - [ ] Evaluate hand flexibility
-   - [ ] Recommend tiles to discard
-
- - [ ] 2. Yaku and hand strategy analyser
-   - [ ] Identify potential Yaku routes
-   - [ ] Calculate Shanten for different Yaku routes
-   - [ ] Compare Ukiere between routes
-   - [ ] Estimate potential hand value
-   - [ ] Compare efficiency against value
-   - [ ] Recommend promising strategies
-
- - [ ] 3. Probability calcualtor
-   - [ ] Calculate probability of drawing a particular tile
-   - [ ] Calculate probability of drawing useful tiles within N draws
-    - [ ] Estimate probability of reaching Tenpai
-    - [ ] Estimate probablity of completing a hand or Yaku
-  
-
-## Phase 4
-   - [ ] Implement an efficiency-focused strategy
-   - [ ] Implement an aggressive/high-value strategy
-   - [ ] Implement a balanced strategy
-   - [ ] Compare strategies across simulations
-   - [ ] Experiment with optimising strategy weights
-   - [ ] Evaluate performance against baseline strategies
-  
-
-## Phase 5
- - [ ] Create tile selector
- - [ ] Add hand editing and tile removal
- - [ ] Add seat selection
- - [ ] Display analysis results
- - [ ] Connect the GUI to analysis engine
- - [ ] Make entering a hand quick and intuitive (keyboard )
+## 7. Trainer mode
+- [ ] Generate random Mahjong hands
+- [ ] Ask user to choose the best discard or strategy
+- [ ] Evaluate the user's decision
+- [ ] Explain the recommended move
+- [ ] Track accuracy and progress
+- [ ] Add difficulty levels
 
 
 
